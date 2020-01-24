@@ -1,0 +1,23 @@
+{
+  "name": "questseditor",
+  "version": "1.0.0",
+  "description": "Quest editor. Part of the project ROG",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rems64/questsEditor.git"
+  },
+  "author": "Remy FAYET",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rems64/questsEditor/issues"
+  },
+  "homepage": "https://github.com/rems64/questsEditor#readme",
+  "dependencies": {
+    "electron": "^7.1.10"
+  }
+}
