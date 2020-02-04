@@ -1,0 +1,66 @@
+body, html
+{
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #212121;
+}
+path.link {
+    fill: none;
+    stroke: blue;
+
+    cursor: default;
+}
+
+.draggable{
+  background-color: red;
+}
+
+.draggable:hover{
+  cursor: grab;
+}
+
+.node{
+  fill: rgba(0.2, 0.2, 0.2, 0.6);
+  stroke: black;
+}
+
+.nodeSelected{
+  stroke: #ff6a00;
+
+}
+
+.pin{
+
+}
+
+
+
+.flowPin{
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: transparent;
+  stroke: #fff;
+}
+
+.flowPinActivated{
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: #fff;
+  stroke: #fff;
+}
+
+.integerPin{
+  stroke: blue;
+  fill: blue;
+}
+
+.booleanPin{
+  stroke: red;
+  fill: red;
+}
+
+.integerPinActivated{
+
+}

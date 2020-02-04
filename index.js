@@ -1,6 +1,8 @@
 const {app, BrowserWindow, dialog} = require('electron');
 const path = require('path');
 const url = require('url');
+//import { SVG } from '@svgdotjs/svg.js'
+//import { SVG } from 'code/js/svg.esm.js'
 
 app.on('ready', function(){
   createSplashScreen();
@@ -12,18 +14,6 @@ app.on('window-all-closed', () => {
     app.quit();
   }
 });
-
-
-
-
-
-
-
-
-
-
-
-
 
 function createSplashScreen(){
   splashScreen = new BrowserWindow({width:1280, height:720, icon:__dirname+'/Images/Icons/icon.png', frame:false, show: false, webPreferences:{nodeIntegration: true}})
@@ -37,8 +27,8 @@ function createSplashScreen(){
 
   splashScreen.once('ready-to-show', () => {
     splashScreen.show();
-    //createMainWindow();
-    //splashScreen.close();
+    createMainWindow();
+    splashScreen.close();
   });
   splashScreen.on('closed', () => {
     splashScreen=null;
@@ -47,20 +37,21 @@ function createSplashScreen(){
 
 
 function createMainWindow(){
-  splashScreen = new BrowserWindow({width:1280, height:720, icon:__dirname+'/Images/Icons/icon.png', frame:true, show: false, webPreferences:{nodeIntegration: true}})
-  splashScreen.setIgnoreMouseEvents(false);
-  splashScreen.loadURL(url.format({
-    pathname: path.join(__dirname, 'code/html/splash.html'),
+  mainWindow = new BrowserWindow({width:1280, height:720, icon:__dirname+'/Images/Icons/icon.png', frame:true, fullscreen:false, show: false, webPreferences:{nodeIntegration: true}})
+  mainWindow.setIgnoreMouseEvents(false);
+  mainWindow.loadURL(url.format({
+    //pathname: path.join(__dirname, 'code/html/mainMenu.html'),
+    pathname: path.join(__dirname, 'code/html/svgPlayground.html'),
     protocol: 'file:',
     slashes: true
   }));
 
 
-  splashScreen.once('ready-to-show', () => {
-    splashScreen.show();
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show();
   });
-  splashScreen.on('closed', () => {
-    splashScreen=null;
+  mainWindow.on('closed', () => {
+    mainWindow=null;
   });
 }
 
