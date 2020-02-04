@@ -1,7 +1,5 @@
 # QES - Quest Editor Software
 
-***
-
 This software is part of the **ROG** project
 
 ***
