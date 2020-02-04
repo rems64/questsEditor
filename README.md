@@ -1,1 +1,1 @@
-<b>QES - Quest Editor Software</b>
+<h1>QES - Quest Editor Software</h1>
