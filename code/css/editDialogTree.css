@@ -1,0 +1,185 @@
+body, html
+{
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+body{
+  display: flex;
+  flex-direction: column;
+}
+
+#graph {
+  background-color: #212121;
+}
+
+.draggable{
+  background-color: red;
+}
+
+.draggable:hover{
+  cursor: grab;
+}
+
+.node{
+  fill: rgba(0.2, 0.2, 0.2, 0.6);
+  stroke: black;
+}
+
+.nodeSelected{
+  stroke: #ff6a00;
+
+}
+
+.pin{
+
+}
+
+.tmpLink{
+  pointer-events: none;
+  stroke: green;
+  stroke-width: 2px;
+}
+
+.link{
+  fill: none;
+  cursor: default;
+  stroke: white;
+  transition: stroke 0.4s, stroke-width 0.4s;
+  cursor: pointer;
+}
+
+.link:hover{
+  stroke: yellow;
+  stroke-width: 10px;
+}
+
+.linkSelected{
+  stroke: red;
+  stroke-width: 10px;
+}
+
+.flowPin{
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: transparent;
+  stroke: #fff;
+}
+
+.flowPinActivated{
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: #fff;
+  stroke: #fff;
+}
+
+.integerPin{
+  stroke: blue;
+  fill: blue;
+}
+
+.booleanPin{
+  stroke: red;
+  fill: red;
+}
+
+.integerPinActivated{
+
+}
+
+.pinHovered{
+  stroke: yellow;
+  stroke-width: 4px;
+}
+
+#toolBar{
+  display: flex;
+  flex-direction: row;
+  background: #66B5FF;
+}
+
+#toolBar > p{
+  margin: auto 20px;
+  font-weight: bold;
+}
+
+
+.btn{
+  height: 70px;
+  background-color: transparent;
+  border: none;
+  border-radius: 10px;
+  margin: 10px;
+  color: white;
+}
+
+.btn:hover{
+  background-color: #5177E8;
+  color: white;
+}
+
+.btn:active{
+  background-color: #5B59FF;
+}
+
+.nodeTitle{
+  stroke: white;
+}
+
+.nodeContent{
+  stroke: white;
+}
+
+#promptContent{
+  background-color: #6f0000;
+  visibility: hidden;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+#promptSwitch{
+  background-color: green;
+  visibility: hidden;
+  padding: 20px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+#subPromptSwitch{
+  display: flex;
+}
+
+#subPromptSwitch > select, #subPromptSwitch > input{
+  margin: 4px;
+}
+
+#promptSwitch > small{
+  align-self: flex-end;
+}
+
+#validateSwitchPromptContent{
+  align-self: flex-end;
+  text-align: center;
+}
+
+#titleInputBlock{
+  height: 90px;
+  padding: 20px;
+}
+
+#titleInput{
+  width: 200px;
+  height: 40px;
+  border-radius: 4px;
+  outline: none;
+  border: 1px solid transparent;
+  background-color: transparent:
+}
+
+#titleInputHelp{
+  width: 100%;
+  text-align: right;
+}

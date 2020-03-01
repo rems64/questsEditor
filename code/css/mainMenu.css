@@ -1,0 +1,120 @@
+body{
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+}
+
+#questsArea{
+  padding: 1%;
+  background-color: #FFBB4D;
+  height: 40%;
+  flex-grow: 1;
+}
+
+#dialogsArea{
+  padding: 1%;
+  background-color: #BF8526;
+  height: auto;
+  flex-grow: 1;
+}
+
+#questsList{
+  display: flex;
+  flex-direction: column;
+}
+
+.quest{
+  width: 80%;
+  height: 20px;
+  background-color: #E88F3A;
+  border-radius: 4px;
+  padding: 10px;
+  margin: 10px;
+}
+
+.quest:hover{
+  background-color: #FF8140;
+}
+
+.dial{
+  width: 80%;
+  background-color: #B37612;
+  border-radius: 2px;
+  padding: 10px;
+  margin: 10px;
+  display: flex;
+}
+
+.dial:hover{
+  background-color: #996A1F;
+}
+
+.dial > p{
+
+}
+.dialDeleteButton{
+  margin-left: 10px;
+  width: 80px;
+  padding: 4px;
+  background-color: red;
+  border: solid 1px transparent;
+  border-radius: 4px;
+  transition: background-color 0.1s;
+}
+
+.dialDeleteButton:hover{
+  background-color: #bf0802;
+}
+
+.dialDeleteButton:active{
+  background-color: #790603;
+}
+
+.dialOpenButton{
+  margin-left: auto;
+  width: 80px;
+  padding: 4px;
+  background-color: #35de06;
+  border: solid 1px transparent;
+  border-radius: 4px;
+  transition: background-color 0.1s;
+}
+
+.dialOpenButton:hover{
+  background-color: #057d11;
+}
+
+.dialOpenButton:active{
+  background-color: #03400f;
+}
+
+#promptDelete{
+  position: absolute;
+  z-index: 1;
+  background-color: red;
+  top: 40%;
+  padding: 40px 10% 40px 10%;
+  width: 80%;
+  visibility: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+#promptDelete > div{
+  align-self: flex-end;
+}
+
+#yesDelete{
+  padding: 10px;
+  border: solid 3px white;
+  border-radius: 4px;
+  margin-left: auto;
+  background-color: red;
+}
+
+#noDelete{
+  padding: 10px;
+  border: solid 3px white;
+  border-radius: 4px;
+  background-color: #35de06;
+}

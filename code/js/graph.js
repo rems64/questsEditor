@@ -15,7 +15,7 @@ var nodeTypes = {
     outputs: ["flow", "bool"]
   },
   "player": {
-    type: "horizontal",
+    type: "vertical",
     sx: 200,
     sy: 300,
     color: "red",
@@ -24,7 +24,7 @@ var nodeTypes = {
     outputs: ["flow", "int"]
   },
   "npc": {
-    type: "horizontal",
+    type: "vertical",
     sx: 200,
     sy: 300,
     color: "red",
@@ -36,23 +36,25 @@ var nodeTypes = {
 }
 
 
-var canvas = SVG().addTo('#graph').size("100%", "99%")
-var tmpdX = 0;
-var tmpdY = 0;
-var moveType=0;
-var gridSize = [20, 20]
-var currentlySelected;
-var tmpLink;
-var currentHoveringPin;
-var concernedObj;
-var nodes = [];
-var currentFloatingLink;
-var currentPin;
-var currentPin2;
-var svgDOM = document.getElementsByTagName("svg")[0];
-var panZoomInfos = [0, 0, 1920, 1080]
-var pt = svgDOM.createSVGPoint();
 
+function initGraph(){
+  var canvas = SVG().addTo('#graph').size("100%", "99%")
+  var tmpdX = 0;
+  var tmpdY = 0;
+  var moveType=0;
+  var gridSize = [20, 20]
+  var currentlySelected;
+  var tmpLink;
+  var currentHoveringPin;
+  var concernedObj;
+  var nodes = [];
+  var currentFloatingLink;
+  var currentPin;
+  var currentPin2;
+  var svgDOM = document.getElementsByTagName("svg")[0];
+  var panZoomInfos = [0, 0, 1920, 1080]
+  var pt = svgDOM.createSVGPoint();
+}
 
 
 function setPanZoom(){
@@ -248,179 +250,3 @@ function createNode(parent, type){
   nodes.push(tmpNode);
   return tmpNode
 }
-
-
-var node3 = createNode(canvas, "player");
-node3.move(220, 40, true)
-var node4 = createNode(canvas, "player");
-node4.move(220, 350, true)
-var node5 = createNode(canvas, "npc");
-node5.move(660, 40, true)
-var node6 = createNode(canvas, "npc");
-node6.move(660, 350, true)
-
-setPanZoom()
-
-/*
-var l1 = createLink(canvas, node3.pinsOut[0], node4.pinsIn[0]);
-var l2 = createLink(canvas, node4.pinsOut[0], node5.pinsIn[0]);
-var l3 = createLink(canvas, node5.pinsOut[0], node6.pinsIn[0]);
-var l4 = createLink(canvas, node5.pinsOut[1], node6.pinsIn[1]);
-var l2 = createLink(canvas, node4, node5);
-var l3 = createLink(canvas, node5, node6);
-var l4 = createLink(canvas, node1, node6);
-*/
-//######################################################################################################################################################################################
-//####################################################################################### EVENTS #######################################################################################
-//######################################################################################################################################################################################
-
-
-canvas.find(".node").mousedown(function(event){
-  concernedObj = null;
-  for(var index in nodes){
-    var tmpNode = nodes[index]
-    if(tmpNode.path == this){
-      concernedObj=tmpNode
-      break
-    }
-  }
-  if(currentlySelected){currentlySelected.path.removeClass("nodeSelected")};
-  currentlySelected = concernedObj;
-  concernedObj.path.addClass("nodeSelected");
-  //currentControled = this.parent(SVG.G);
-  tmpdX = getCoords(event)[0] - concernedObj.x()
-  tmpdY = getCoords(event)[1] - concernedObj.y()
-  moveType=1;
-})
-
-
-
-$(document).mousemove(function(event){
-  if(moveType==1){
-    if (concernedObj.main!=null){
-      concernedObj.main.move(Math.round((getCoords(event)[0]-tmpdX)/gridSize[0])*gridSize[0], Math.round((getCoords(event)[1]-tmpdY)/gridSize[1])*gridSize[1]);
-      concernedObj.updateLinks()
-
-    }
-  }
-  else if(moveType==2){
-    updateSpline(currentFloatingLink, tmpdX, tmpdY, getCoords(event)[0], getCoords(event)[1]);
-  }
-});
-
-
-$(document).on("mouseup", function(){
-  if(moveType==2){
-    currentFloatingLink.remove()
-    currentFloatingLink=null;
-    if(currentHoveringPin!=null){
-      for(var index in nodes){
-        var tmpNode = nodes[index]
-        for(var index2 in tmpNode.pinsIn){
-          if(tmpNode.pinsIn[index2].path == currentHoveringPin){
-            currentPin2=tmpNode.pinsIn[index2];
-            break
-          }
-        }
-        for(var index2 in tmpNode.pinsOut){
-          if(tmpNode.pinsOut[index2].path == currentHoveringPin){
-            currentPin2=tmpNode.pinsOut[index2];
-            break
-          }
-        }
-      }
-      createLink(canvas, currentPin, currentPin2)
-      currentPin=null;
-      currentPin2=null;
-    }
-  }
-  moveType=0;
-});
-
-
-
-canvas.find(".pin").mousedown(function(event){
-  var currentParentToPin = null;
-  for(var index in nodes){
-    var tmpNode = nodes[index]
-    for(var index2 in tmpNode.pinsOut){
-      if(tmpNode.pinsOut[index2].path == this){
-        currentPin=tmpNode.pinsOut[index2];
-        currentParentToPin=tmpNode;
-        break
-      }
-    }
-    for(var index2 in tmpNode.pinsIn){
-      if(tmpNode.pinsIn[index2].path == this){
-        currentPin=tmpNode.pinsIn[index2];
-        currentParentToPin=tmpNode;
-        break
-      }
-    }
-  }
-  tmpdX = this.cx()
-  tmpdY = this.cy()
-  concernedObj=this;
-  currentFloatingLink = createFloatingLink(canvas, tmpdX, tmpdY, getCoords(event)[0], getCoords(event)[1])
-  moveType=2;
-})
-
-canvas.find(".pin").mouseover(function(event){
-  var tmpCurPin;
-  for(var index in nodes){
-    var tmpNode = nodes[index]
-    for(var index2 in tmpNode.pinsIn){
-      if(tmpNode.pinsIn[index2].path == this){
-        tmpCurPin=tmpNode.pinsIn[index2];
-        break
-      }
-    }
-    for(var index2 in tmpNode.pinsOut){
-      if(tmpNode.pinsOut[index2].path == this){
-        tmpCurPin=tmpNode.pinsOut[index2];
-        break
-      }
-    }
-  }
-  if(currentPin){
-    if(currentPin.type==1){
-      if(tmpCurPin.type==2){
-        if(tmpCurPin.nature == currentPin.nature){
-          this.addClass("pinHovered");
-          currentHoveringPin=this;
-        }
-      }
-    }
-    else if(currentPin.type==2){
-      if(tmpCurPin.type==1){
-        if(tmpCurPin.nature == currentPin.nature){
-          this.addClass("pinHovered");
-          currentHoveringPin=this;
-        }
-      }
-    }
-  }
-})
-
-canvas.find(".pin").mouseleave(function(event){
-  if(currentHoveringPin==this){
-    currentHoveringPin.removeClass("pinHovered")
-    currentHoveringPin=null;
-  }
-})
-
-$(document).on("keydown", (e) => {
-  if (!e.repeat)
-    if(e.key=="ArrowUp"){
-      pan(0, -50)
-    }
-    if(e.key=="ArrowDown"){
-      pan(0, 50)
-    }
-    if(e.key=="ArrowLeft"){
-      pan(-50, 0)
-    }
-    if(e.key=="ArrowRight"){
-      pan(50, 0)
-    }
-  });

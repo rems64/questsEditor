@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <link rel="stylesheet" href="../css/bootstrap.min.css">
+  <link rel="stylesheet" href="../css/master.css">
+  <link rel="stylesheet" href="../css/editDialogTree.css">
+</head>
+<body>
+  <div id="toolBar">
+    <div id="titleInputBlock" class="">
+      <input type="text" class="black" id="titleInput"><br/>
+      <small id="titleInputHelp" class="dnr white">Titre</small>
+    </div>
+    <button type="button" name="button" class="btn noselect white" id="compile">Compiler</button>
+    <button type="button" name="button" class="btn noselect white" id="save">Sauvegarder</button>
+    <div class="verticalLine"></div>
+    <p class="white noselect">Ajouter</p>
+    <button type="button" name="button" class="btn noselect white" id="addNPCBtn">PNJ</button>
+    <button type="button" name="button" class="btn noselect white" id="addPlayerBtn">Joueur</button>
+    <button type="button" name="button" class="btn noselect white" id="addSwitchBtn">Switch</button>
+  </div>
+  <div id="graph"></div>
+
+  <div class="popup dnr" id="promptContent">
+    <div class="form-group dnr">
+      <label id="" class="white dnr">Contenu</label>
+      <br/>
+      <input type="text" class="form-control dnr black" id="contentInput">
+      <br/>
+      <small id="idHelp" class="dnr white noselect">Réplique qui sera dite par le personnage</small>
+    </div>
+    <br/>
+    <button type="button" name="button" class="btn btn-success text-right white dnr noselect" id="validatePromptContent">Valider</button>
+  </div>
+  <div class="popup dnr" id="promptSwitch">
+    <label id="" class="white dnr noselect">Condition</label>
+    <br/>
+    <div id="subPromptSwitch">
+      <select id="switchSelectVariable">
+        <option value="life">Vie</option>
+        <option value="honor">Honneur</option>
+        <option value="hunger">Faim</option>
+      </select>
+      <select id="switchSelectOperator">
+        <option value="=">=</option>
+        <option value="!=">!=</option>
+        <option value="<"><</option>
+        <option value=">">></option>
+        <option value="<="><=</option>
+        <option value=">=">>=</option>
+      </select>
+      <input type="text" class="form-control dnr black" id="switchValueInput">
+    </div>
+    <small class="dnr white noselect">Valeur de 0 à 100</small>
+    <br/>
+    <button type="button" name="button" class="btn btn-success text-right white dnr noselect" id="validateSwitchPromptContent">Valider</button>
+  </div>
+  <script type="module" src="../js/editDialogTree.js"></script>
+</div>
+</body>
+</html>
