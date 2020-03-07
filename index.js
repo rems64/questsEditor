@@ -23,7 +23,8 @@ app.on('window-all-closed', () => {
 });
 
 function shouldLogin(){
-  fs.readFile("data/settings.json", 'utf8', function(err, contents) {
+  var fileLoc = path.join(__dirname, 'data/settings.json')
+  fs.readFile(fileLoc, 'utf8', function(err, contents) {
     if(err){
       throw err;
     }
@@ -65,8 +66,8 @@ function createMainWindow(){
   mainWindow = new BrowserWindow({width:1280, height:720, icon:__dirname+'/Images/Icons/icon.png', titleBarStyle: 'hidden' , fullscreen:false, show: false, webPreferences:{nodeIntegration: true}})
   mainWindow.setIgnoreMouseEvents(false);
   mainWindow.loadURL(url.format({
-    pathname: path.join(__dirname, 'code/html/mainMenu.html'),
-    //pathname: path.join(__dirname, 'code/html/editDialogTree.html'),
+    //pathname: path.join(__dirname, 'code/html/mainMenu.html'),
+    pathname: path.join(__dirname, 'code/html/editDialogTree.html'),
     protocol: 'file:',
     slashes: true
   }));

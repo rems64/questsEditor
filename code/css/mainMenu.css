@@ -118,3 +118,28 @@ body{
   border-radius: 4px;
   background-color: #35de06;
 }
+
+#createNewDialog{
+  margin-left: auto;
+  width: 80px;
+  padding: 10px;
+  background-color: #35de06;
+  border: solid 1px transparent;
+  border-radius: 4px;
+  transition: background-color 0.1s;
+}
+
+#createNewDialog:hover{
+  background-color: #057d11;
+}
+
+#createNewDialog:active{
+  background-color: #03400f;
+}
+
+
+#newDialogTitle{
+  border: 0;
+  border-radius: 4px;
+  padding: 10px;
+}

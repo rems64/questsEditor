@@ -1,17 +1,107 @@
 const $ = require("jquery");
-const { remote } = require('electron')
-const fs = require('fs');
+const { remote } = require('electron');
+const fs = require('fs-extra');
+const path = require("path");
+const url = require("url");
 import { SVG } from "./svg.esm.js"
 import './svg.panzoom.mjs'
 import './svg.draggable.mjs'
 
+var nodeTypes = {
+  "default": {
+    desc: "default",
+    type: "horizontal",
+    nature: "replique",
+    sx: 200,
+    sy: 300,
+    color: "red",
+    classes: [],
+    inputs: ["flow", "int"],
+    outputs: ["flow", "bool"],
+    text: "défaut"
+  },
+  "input": {
+    desc: "input",
+    type: "horizontal",
+    nature: "input",
+    sx: 180,
+    sy: 70,
+    color: "red",
+    classes: ["inputNode"],
+    inputs: [],
+    outputs: ["flow"],
+    text: "I"
+  },
+  "output": {
+    desc: "output",
+    type: "horizontal",
+    nature: "output",
+    sx: 170,
+    sy: 70,
+    color: "red",
+    classes: ["outputNode"],
+    inputs: ["flow"],
+    outputs: [],
+    text: "O"
+  },
+  "player": {
+    desc: "player",
+    type: "horizontal",
+    nature: "replique",
+    sx: 200,
+    sy: 200,
+    color: "red",
+    classes: ["playerNode"],
+    inputs: ["flow"],
+    outputs: ["flow", "bool"],
+    text: "Joueur"
+  },
+  "npc": {
+    desc: "npc",
+    type: "horizontal",
+    nature: "replique",
+    sx: 200,
+    sy: 200,
+    color: "red",
+    classes: ["npcNode"],
+    inputs: ["flow"],
+    outputs: ["flow", "bool"],
+    text: "PNJ"
+  },
+  "switchBool": {
+    desc: "switchBool",
+    type: "horizontal",
+    nature: "switch",
+    sx: 200,
+    sy: 200,
+    color: "blue",
+    classes: ["switchNode"],
+    inputs: ["flow", "bool"],
+    outputs: ["flow", "flow"],
+    text: "swBool"
+  }
+}
 
 
-var workingOnTreeID = remote.getGlobal('sharedObj').currentDialogTree
+
+
+
+//var workingOnTreeID = remote.getGlobal('sharedObj').currentDialogTree
+var workingOnTreeID = "d0"
 var treeJSON;
 console.log("working on : " + workingOnTreeID);
 
-var canvas = SVG().addTo('#graph').size("100%", "100%")
+var canvas = SVG().addTo('#graph');
+
+var svgDOM = document.getElementsByTagName("svg")[0];
+var oldStrAttr;
+var panZoomInfos = [0, 0, 2880, 1200]
+window.addEventListener('resize', function() {
+  console.log("New ratio");
+});
+
+
+
 var tmpdX = 0;
 var tmpdY = 0;
 var moveType=0;
@@ -25,8 +115,6 @@ var links = [];
 var currentFloatingLink;
 var currentPin;
 var currentPin2;
-var svgDOM = document.getElementsByTagName("svg")[0];
-var panZoomInfos = [0, 0, 1920, 1080]
 var pt = svgDOM.createSVGPoint();
 var currentlySelected = [];
 var movementSpeed = 1.5;
@@ -36,15 +124,24 @@ var currentID = 0;
 var editingText = false;
 var selectedLink = null;
 const currentWin = remote.BrowserWindow.getFocusedWindow()
-var title = ""
+var title = "";
 var currentLink;
-
-
+const BrowserWindow = remote.BrowserWindow;
+var inputNode;
+var outputNode;
+var movingNode = false;
+var zoomMax = 800;
+var zoomMin = 80000;
 loadTree()
 
 
 function loadTree(){
-  var pathToDial = "data/ROGData/dialogs/" + workingOnTreeID + ".json";
+  inputNode = createNode(canvas, "input");
+  inputNode.move(50, 400);
+  outputNode = createNode(canvas, "output");
+  outputNode.move(1500, 400);
+  console.log("loading Tree");
+  var pathToDial = path.join(__dirname, "../../data/ROGData/dialogs/" + workingOnTreeID + ".json");
   fs.readFile(pathToDial, 'utf8', function(err, contents) {
     if(err){
       throw err;
@@ -59,6 +156,16 @@ function loadTree(){
           var tmpNode = createNode(canvas, String(treeJSON.nodes[index].desc), String(treeJSON.nodes[index].id));
           tmpNode.move(treeJSON.nodes[index].x, treeJSON.nodes[index].y);
           tmpNode.changeContent(treeJSON.nodes[index].content);
+        }
+        else{
+          if(treeJSON.nodes[index].nature=="input"){
+            console.log("moving input");
+            inputNode.move(treeJSON.nodes[index].x, treeJSON.nodes[index].y);
+          }
+          else if(treeJSON.nodes[index].nature=="output"){
+            console.log("moving output");
+            outputNode.move(treeJSON.nodes[index].x, treeJSON.nodes[index].y);
+          }
         }
       }
       var tmpTarget = null;
@@ -82,84 +189,6 @@ function getNodeByID(id){
   }
 }
 
-var nodeTypes = {
-  "default": {
-    desc: "default",
-    type: "horizontal",
-    nature: "replique",
-    sx: 200,
-    sy: 300,
-    color: "red",
-    classes: [],
-    inputs: ["flow", "int"],
-    outputs: ["flow", "bool"],
-    text: "défaut"
-  },
-  "input": {
-    desc: "input",
-    type: "horizontal",
-    nature: "input",
-    sx: 180,
-    sy: 70,
-    color: "red",
-    classes: [],
-    inputs: [],
-    outputs: ["flow"],
-    text: "I"
-  },
-  "output": {
-    desc: "output",
-    type: "horizontal",
-    nature: "output",
-    sx: 170,
-    sy: 70,
-    color: "red",
-    classes: [],
-    inputs: ["flow"],
-    outputs: [],
-    text: "O"
-  },
-  "player": {
-    desc: "player",
-    type: "horizontal",
-    nature: "replique",
-    sx: 200,
-    sy: 200,
-    color: "red",
-    classes: [],
-    inputs: ["flow"],
-    outputs: ["flow", "bool"],
-    text: "Joueur"
-  },
-  "npc": {
-    desc: "npc",
-    type: "horizontal",
-    nature: "replique",
-    sx: 200,
-    sy: 200,
-    color: "red",
-    classes: [],
-    inputs: ["flow"],
-    outputs: ["flow", "bool"],
-    text: "PNJ"
-  },
-  "switchBool": {
-    desc: "switchBool",
-    type: "horizontal",
-    nature: "switch",
-    sx: 200,
-    sy: 200,
-    color: "blue",
-    classes: [],
-    inputs: ["flow", "bool"],
-    outputs: ["flow", "flow"],
-    text: "swBool"
-  }
-}
-
-
-
-
 
 const promptContentDom = document.getElementById("promptContent");
 const promptSwitchDom = document.getElementById("promptSwitch")
@@ -169,14 +198,50 @@ function getNodeNewID(){
   return currentID
 }
 
+var tmpPanZoomInfos=[]
+
 function setPanZoom(){
   var strAttr = panZoomInfos[0].toString() + " " + panZoomInfos[1].toString() + " " + panZoomInfos[2].toString() + " " + panZoomInfos[3].toString()
-  svgDOM.setAttribute("viewBox", strAttr);
+  //svgDOM.setAttribute("viewBox", strAttr);
+  var tl = new TimelineMax();
+
+  tl.add("zIn");
+  tl.fromTo(svgDOM, 0.2, {
+    attr: { viewBox: oldStrAttr}
+  }, {
+    attr: { viewBox: strAttr}
+  }, "zIn");
+  oldStrAttr = strAttr
 }
 
 function pan(x, y){
   panZoomInfos[0]+=x;
   panZoomInfos[1]+=y;
+  setPanZoom()
+}
+
+function zoom(levelOfZoom, x, y){
+  var level = 0;
+  if(levelOfZoom>50){level=50}
+  else if(levelOfZoom<50){level=-50}
+  else{level=levelOfZoom}
+  //console.log(level);
+  if (level<0) {
+    if (panZoomInfos[2]-panZoomInfos[0]>zoomMax) {
+      panZoomInfos[0]+=-level*(x)*(panZoomInfos[2]/100)
+      panZoomInfos[1]+=-level*(y)*(panZoomInfos[3]/100)
+      panZoomInfos[2]-=-level*(panZoomInfos[2]/100)
+      panZoomInfos[3]-=-level*(panZoomInfos[3]/100)
+    }
+  }
+  else{
+    if(panZoomInfos[2]-panZoomInfos[0]<zoomMin) {
+      panZoomInfos[0]+=-level*x*(panZoomInfos[2]/100)
+      panZoomInfos[1]+=-level*y*(panZoomInfos[3]/100)
+      panZoomInfos[2]-=-level*(panZoomInfos[2]/100)
+      panZoomInfos[3]-=-level*(panZoomInfos[3]/100)
+    }
+  }
   setPanZoom()
 }
 
@@ -270,7 +335,7 @@ function getRandomInt(min, max) {
 function createNodePath(parent, infos){
   var node = parent.rect(infos.sx, infos.sy).addClass("node").addClass("draggable").radius(10);
   for(var classe in infos.classes) {
-    node.addClass(classe);
+    node.addClass(infos.classes[classe]);
   }
   return node
 }
@@ -400,6 +465,7 @@ function Node(parent, nodeType, id, content){
   this.title = setTitle(this.main, this.type);
   this.contentTxt = setContentTxt(this.main, this.type, this.content);
   [this.pinsIn, this.pinsOut] = createNodePins(this.main, this.type, this);
+  this.offset = []
   this.updateLinks = function(){
     for(var i in this.pinsOut){
       this.pinsOut[i].updateLinked()
@@ -424,10 +490,19 @@ function Node(parent, nodeType, id, content){
       this.main.center((Math.round(x/gridSize[0])*gridSize[0]), (Math.round(y/gridSize[0])*gridSize[0]));
     };
   };
+  this.translate = function(x, y, stick){
+    if(!stick){
+      this.main.move(x+this.offset[0], y+this.offset[1]);
+    }
+    else{
+      this.main.move((Math.round((x-this.offset[0])/gridSize[0])*gridSize[0]), (Math.round((y-this.offset[1])/gridSize[0])*gridSize[0]));
+    };
+  }
   this.x = function(value){return this.main.x(value)};
   this.y = function(value){return this.main.y(value)};
   this.delete = function(){
     if(this.type.desc!="input" & this.type.desc!="output"){
+      console.log("Deleting");
       for(var index in this.pinsOut){
         this.pinsOut[index].deleteConnected()
         this.pinsOut[index].path.remove()
@@ -506,14 +581,12 @@ $("#addPlayerBtn").click(function(){
 });
 
 $("#addSwitchBtn").click(function(){
-  createNode(canvas, "switch").center((panZoomInfos[2]+panZoomInfos[0])/2, (panZoomInfos[3]+panZoomInfos[1])/2, true);
+  createNode(canvas, "switchBool").center((panZoomInfos[2]+panZoomInfos[0])/2, (panZoomInfos[3]+panZoomInfos[1])/2, true);
 })
 
 
 setPanZoom()
 
-var inputNode = createNode(canvas, "input").move(50, 400);
-var outputNode = createNode(canvas, "output").move(1500, 400);
 
 function getConcernedNode(concerned){
   for(var index in nodes){
@@ -548,12 +621,14 @@ function hidePrompts(){
 
 
 $("#save").on("click", function(){
-  saveGraph();
+  compileGraph();
 })
 
+/*
 $("#compile").on("click", function(){
   compileGraph();
 })
+*/
 
 $("#validatePromptContent").on("click", function(){
   concernedObj.changeContent($("#contentInput").val());
@@ -584,7 +659,7 @@ function saveGraph(){
     }
   });
   */
-  var pathToDial = "data/ROGData/dialogs/" + workingOnTreeID + ".json";
+  var pathToDial = path.join(__dirname, "../../data/ROGData/dialogs/" + workingOnTreeID + ".json");
   fs.exists(pathToDial, function(exists) {
     if (exists) {
       var jsonToWrite = JSON.stringify(json, null, "\t");
@@ -644,7 +719,29 @@ function compileGraph(){
       desc: cnode.desc
     })
   }
+  saveGraph();
 }
+
+$("#backToMenu").on("click", function(){
+  var oldWin = remote.getCurrentWindow();
+  var mainWindow = new BrowserWindow({width:1280, height:720, icon:__dirname+'/Images/Icons/icon.png', titleBarStyle: 'hidden' , fullscreen:false, show: false, webPreferences:{nodeIntegration: true}})
+  mainWindow.setIgnoreMouseEvents(false);
+  mainWindow.loadURL(url.format({
+    pathname: path.join(__dirname, 'mainMenu.html'),
+    //pathname: path.join(__dirname, 'code/html/editDialogTree.html'),
+    protocol: 'file:',
+    slashes: true
+  }));
+
+
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show();
+    oldWin.close();
+  });
+  mainWindow.once('closed', () => {
+    //mainWindow=null;
+  });
+})
 
 
 //######################################################################################################################################################################################
@@ -655,9 +752,18 @@ $("#titleInput").on("change", function(){
   title = $("#titleInput").val()
 })
 
-$("#graph").click(function(event){
+var delta=[]
+
+$("#graph").mousedown(function(event){
   if(!event.target.classList.contains("dnr")){
     hidePrompts()
+  }
+  if(moveType==0){
+    var rect = svgDOM.getBoundingClientRect();
+    //console.log((rect.width/panZoomInfos[0])*event.offsetX);
+    moveType=3;
+    delta[0]=(panZoomInfos[2])*(event.offsetX/rect.width)+panZoomInfos[0]
+    delta[1]=(panZoomInfos[3])*(event.offsetY/rect.height)+panZoomInfos[1]
   }
 })
 
@@ -674,47 +780,64 @@ function selectNodeEvt(event, ceci){
   concernedObj = null;
   concernedObj=getConcernedNode(ceci)
   if (!event.shiftKey) {
-    if(currentlySelected.length>0){
-      if(!currentlySelected.includes(concernedObj)){
+    if(currentlySelected.length>0){ //Si il y a déjà des nodes sélectionnés
+      if(!currentlySelected.includes(concernedObj)){ //
         for(var i in currentlySelected){currentlySelected[i].path.removeClass("nodeSelected")}
         currentlySelected=[]
         currentlySelected.push(concernedObj);
         concernedObj.path.addClass("nodeSelected");
       }
-      else{
+      else{ //
         console.log("Déjà sélectionné, appuyez sur shift pour l'enlever d'une sélection");
       }
     }
-    else{
+    else{ //
       currentlySelected.push(concernedObj);
       concernedObj.path.addClass("nodeSelected");
     }
   }
-  else{
+  else{ //
     if(currentlySelected.includes(concernedObj)){
       currentlySelected.splice(currentlySelected.indexOf(concernedObj), 1);
       concernedObj.path.removeClass("nodeSelected");
     }
-    else{
+    else{ //
       currentlySelected.push(concernedObj);
       concernedObj.path.addClass("nodeSelected");
     }
   }
   //currentControled = ceci.parent(SVG.G);
-  tmpdX = getCoords(event)[0] - concernedObj.x()
-  tmpdY = getCoords(event)[1] - concernedObj.y()
+  //tmpdX = getCoords(event)[0] - concernedObj.x()
+  //tmpdY = getCoords(event)[1] - concernedObj.y()
+  var rect = svgDOM.getBoundingClientRect();
+  console.log((rect.width/panZoomInfos[0])*event.offsetX);
+  tmpdX=((panZoomInfos[2])*(event.offsetX/rect.width)+panZoomInfos[0]) - concernedObj.x()
+  tmpdY=((panZoomInfos[3])*(event.offsetY/rect.height)+panZoomInfos[1]) - concernedObj.y()
   moveType=1;
 };
 
 
 
-$(document).mousemove(function(event){
+$("#graph").mousemove(function(event){
   if(moveType==1){
+    if (!movingNode) {
+      for (var i in currentlySelected){
+        var rect = svgDOM.getBoundingClientRect();
+        currentlySelected[i].offset[0] = ((panZoomInfos[2])*(event.offsetX/rect.width)+panZoomInfos[0]) - currentlySelected[i].x();
+        currentlySelected[i].offset[1] = ((panZoomInfos[3])*(event.offsetY/rect.height)+panZoomInfos[1]) - currentlySelected[i].y()
+      }
+      movingNode=true;
+    }
     if (concernedObj.main!=null){
+      var rect = svgDOM.getBoundingClientRect();
+      var newX = (panZoomInfos[2])*(event.offsetX/rect.width)+panZoomInfos[0]
+      var newY = (panZoomInfos[3])*(event.offsetY/rect.height)+panZoomInfos[1]
       for(var i in currentlySelected){
-        currentlySelected[i].main.move((currentlySelected[i].x()+event.originalEvent.movementX*movementSpeed), (currentlySelected[i].y()+event.originalEvent.movementY*movementSpeed));
+        //currentlySelected[i].main.move((currentlySelected[i].x()+event.originalEvent.movementX*movementSpeed), (currentlySelected[i].y()+event.originalEvent.movementY*movementSpeed));
         //currentlySelected[i].main.move((currentlySelected[i].x()+getRelativeCoords(event)[0]), (currentlySelected[i].y()+getRelativeCoords(event)[1]));
-        currentlySelected[i].updateLinks()
+        //console.log((newX-tmpdX));
+        currentlySelected[i].translate(newX, newY, true);
+        currentlySelected[i].updateLinks();
       }
       //concernedObj.main.move(Math.round((getCoords(event)[0]-tmpdX)/gridSize[0])*gridSize[0], Math.round((getCoords(event)[1]-tmpdY)/gridSize[1])*gridSize[1]);
       //concernedObj.updateLinks()
@@ -724,7 +847,38 @@ $(document).mousemove(function(event){
   else if(moveType==2){
     updateSpline(currentFloatingLink, tmpdX, tmpdY, getCoords(event)[0], getCoords(event)[1]);
   }
+  else if(moveType==3){
+    //pan(-event.originalEvent.movementX*movementSpeed*((panZoomInfos[2]-panZoomInfos[0])*0.002), -event.originalEvent.movementY*movementSpeed*((panZoomInfos[3]-panZoomInfos[1])*0.0002))
+    //panAbs(-event.clientX, -event.clientY)
+    var rect = svgDOM.getBoundingClientRect();
+    var newX = (panZoomInfos[2])*(event.offsetX/rect.width);
+    var newY = (panZoomInfos[3])*(event.offsetY/rect.height);
+    console.log("Hello : " + (event.offsetX/rect.width));
+    panAbs((newX-delta[0]), (newY-delta[1]));
+    //console.log(getRelativeCoordsByClient(event)[0]);
+    setPanZoom();
+  }
 });
+
+function getRelativeCoordsByClient(evt){
+  var nPt = svgDOM.createSVGPoint();
+  nPt.x = evt.offsetX;
+  nPt.y = evt.offsetY;
+
+  // The cursor point, translated into svg coordinates
+  var cursorpt =  nPt.matrixTransform(svgDOM.getScreenCTM());
+  //console.log("(" + cursorpt.x + ", " + cursorpt.y + ")");
+  //cursorpt.x = cursorpt.x-panZoomInfos[0]
+  //cursorpt.y = cursorpt.y+panZoomInfos[1]
+  return [cursorpt.x, cursorpt.y]
+}
+
+function panAbs(x, y){
+  console.log(x);
+  panZoomInfos[0]=-x
+  panZoomInfos[1]=-y
+  setPanZoom()
+}
 
 
 $(document).on("mouseup", function(){
@@ -752,10 +906,19 @@ $(document).on("mouseup", function(){
       currentPin2=null;
     }
   }
+  movingNode = false;
   currentPin=null
   moveType=0;
+  console.log("mouseup");
 });
 
+$(document).on("mousewheel", function(event){
+  console.log(event);
+  if (event.originalEvent.deltaY) {
+    var rect = svgDOM.getBoundingClientRect();
+    zoom(event.originalEvent.deltaY, (event.offsetX/rect.width), (event.offsetY/rect.height));
+  }
+})
 
 
 function selectPinEvt(event, ceci){
@@ -845,6 +1008,7 @@ $(document).on("keydown", (e) => {
     if(e.key=="Delete" | e.key=="x"){
       if(!editingText){
         if (selectedLink!=null) {
+          console.log("Removing link!");
           selectedLink.remove()
         }
         else{

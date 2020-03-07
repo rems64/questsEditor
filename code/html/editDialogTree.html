@@ -9,11 +9,12 @@
 </head>
 <body>
   <div id="toolBar">
+    <button type="button" name="button" id="backToMenu" class="btn noselect white">Menu</button>
     <div id="titleInputBlock" class="">
       <input type="text" class="black" id="titleInput"><br/>
       <small id="titleInputHelp" class="dnr white">Titre</small>
     </div>
-    <button type="button" name="button" class="btn noselect white" id="compile">Compiler</button>
+    <!--- <button type="button" name="button" class="btn noselect white" id="compile">Compiler</button> -->
     <button type="button" name="button" class="btn noselect white" id="save">Sauvegarder</button>
     <div class="verticalLine"></div>
     <p class="white noselect">Ajouter</p>
@@ -22,6 +23,12 @@
     <button type="button" name="button" class="btn noselect white" id="addSwitchBtn">Switch</button>
   </div>
   <div id="graph"></div>
+  <div id="properties">
+    <div id="propertiesType">Player</div>
+    <div id="propertiesId">#01</div>
+    <textarea type="textarea" name="propertiesContent" value="Contenu" id="propertiesContent"></textarea>
+  </div>
+
 
   <div class="popup dnr" id="promptContent">
     <div class="form-group dnr">
@@ -57,6 +64,7 @@
     <br/>
     <button type="button" name="button" class="btn btn-success text-right white dnr noselect" id="validateSwitchPromptContent">Valider</button>
   </div>
+  <script src="../js/gsap.min.js"></script>
   <script type="module" src="../js/editDialogTree.js"></script>
 </div>
 </body>

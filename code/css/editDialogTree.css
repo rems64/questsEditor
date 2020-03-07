@@ -13,7 +13,45 @@ body{
 
 #graph {
   background-color: #212121;
+  flex-grow: 1;
 }
+
+
+#graph > svg {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+#graph > svg {
+  transition: 2s;
+}
+
+#properties{
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 30%;
+  height: 100%;
+  background: white;
+  border-left: solid black 1px;
+}
+
+#properties > #propertiesType {
+  margin: 1%;
+  text-align: left;
+}
+
+#properties > #propertiesId {
+  margin: 1%;
+  text-align: right;
+}
+
+#properties > #propertiesContent {
+  margin: 1%;
+  width: 98%;
+}
+
 
 .draggable{
   background-color: red;
@@ -25,7 +63,20 @@ body{
 
 .node{
   fill: rgba(0.2, 0.2, 0.2, 0.6);
-  stroke: black;
+  stroke: transparent;
+  stroke-width: 2px;
+}
+
+.playerNode{
+  fill: #4769FFbb;
+}
+
+.npcNode{
+  fill: #899942bb;
+}
+
+.switchNode{
+  fill: #B30E7Ebb;
 }
 
 .nodeSelected{
@@ -59,6 +110,7 @@ body{
 .linkSelected{
   stroke: red;
   stroke-width: 10px;
+  z-index: 0;
 }
 
 .flowPin{
@@ -98,6 +150,7 @@ body{
   display: flex;
   flex-direction: row;
   background: #66B5FF;
+  height: 90px;
 }
 
 #toolBar > p{
@@ -131,6 +184,7 @@ body{
 .nodeContent{
   stroke: white;
 }
+
 
 #promptContent{
   background-color: #6f0000;
