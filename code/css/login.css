@@ -1,0 +1,20 @@
+body{
+  background-color: white;
+}
+#formBG{
+  margin: auto;
+  width: 40%;
+  height: 80%;
+  border-radius: 40px;
+  background-color: #212121;
+  padding: 50px;
+  color: white;
+}
+
+#idInput{
+  width: 100%;
+}
+
+#idHelp{
+  float: right;
+}

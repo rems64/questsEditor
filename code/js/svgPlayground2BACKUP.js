@@ -4,39 +4,7 @@ import './svg.draggable.mjs'
 
 const $ = require("jquery");
 
-var nodeTypes = {
-  "default": {
-    type: "horizontal",
-    sx: 200,
-    sy: 300,
-    color: "red",
-    classes: [],
-    inputs: ["flow", "int"],
-    outputs: ["flow", "bool"]
-  },
-  "player": {
-    type: "horizontal",
-    sx: 200,
-    sy: 300,
-    color: "red",
-    classes: [],
-    inputs: ["flow", "bool"],
-    outputs: ["flow", "int"]
-  },
-  "npc": {
-    type: "horizontal",
-    sx: 200,
-    sy: 300,
-    color: "red",
-    classes: [],
-    inputs: ["flow", "bool"],
-    outputs: ["flow", "int"]
-  }
-
-}
-
-
-var canvas = SVG().addTo('#graph').size("100%", "99%")
+var canvas = SVG().addTo('#drawArea').size("100%", "99%")
 var tmpdX = 0;
 var tmpdY = 0;
 var moveType=0;
@@ -52,8 +20,28 @@ var currentPin2;
 var svgDOM = document.getElementsByTagName("svg")[0];
 var panZoomInfos = [0, 0, 1920, 1080]
 var pt = svgDOM.createSVGPoint();
+console.log(pt);
 
 
+var nodeTypes = {
+  "default": {
+    sx: 200,
+    sy: 300,
+    color: "red",
+    classes: [],
+    inputs: ["flow", "int"],
+    outputs: ["flow", "bool"]
+  },
+  "type1": {
+    sx: 200,
+    sy: 300,
+    color: "red",
+    classes: [],
+    inputs: ["flow", "bool"],
+    outputs: ["flow", "int"]
+  }
+
+}
 
 function setPanZoom(){
   var strAttr = panZoomInfos[0].toString() + " " + panZoomInfos[1].toString() + " " + panZoomInfos[2].toString() + " " + panZoomInfos[3].toString()
@@ -145,12 +133,7 @@ function createNodePins(parent, infos){
   var inp = [];
   for(var inputPin in infos.inputs) {
     //inp.push(createPin(parent, infos.inputs[inputPin], parent.x()+10, 50*i+20))
-    if(infos.type=="horizontal"){
-      var tmpPin = new Pin(parent, infos.inputs[inputPin], parent.x()+10, 50*i+20)
-    }
-    else{
-      var tmpPin = new Pin(parent, infos.inputs[inputPin], 50*i+20, parent.y()+10)
-    }
+    var tmpPin = new Pin(parent, infos.inputs[inputPin], parent.x()+10, 50*i+20)
     tmpPin.type = 1;
     tmpPin.nature = infos.inputs[inputPin]
     inp.push(tmpPin);
@@ -161,12 +144,7 @@ function createNodePins(parent, infos){
   var oup=[];
   for(var inputPin in infos.outputs) {
     //oup.push(createPin(parent, infos.outputs[inputPin], parent.width()-30, 50*i+20))
-    if(infos.type=="horizontal"){
-      var tmpPin = new Pin(parent, infos.outputs[inputPin], parent.width()-30, 50*i+20);
-    }
-    else{
-      var tmpPin = new Pin(parent, infos.outputs[inputPin], 50*i+20, parent.height()-30);
-    }
+    var tmpPin = new Pin(parent, infos.outputs[inputPin], parent.width()-30, 50*i+20);
     tmpPin.type = 2;
     tmpPin.nature = infos.outputs[inputPin]
     oup.push(tmpPin);
@@ -249,14 +227,21 @@ function createNode(parent, type){
   return tmpNode
 }
 
+/*
+var node1 = createNode(canvas, "default");
+var node2 = createNode(canvas, "default");
 
-var node3 = createNode(canvas, "player");
+
+node1.move(100, 10)
+*/
+
+var node3 = createNode(canvas, "default");
 node3.move(220, 40, true)
-var node4 = createNode(canvas, "player");
+var node4 = createNode(canvas, "default");
 node4.move(220, 350, true)
-var node5 = createNode(canvas, "npc");
+var node5 = createNode(canvas, "type1");
 node5.move(660, 40, true)
-var node6 = createNode(canvas, "npc");
+var node6 = createNode(canvas, "type1");
 node6.move(660, 350, true)
 
 setPanZoom()

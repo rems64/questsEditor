@@ -1,0 +1,53 @@
+#grid{
+  width: 50%;
+  height: 100%;
+  overflow: auto;
+}
+
+.card{
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  width: 200px;
+  height: 300px;
+  margin: 5px;
+  border: solid #212121;
+  border-radius: 10px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  user-select: none;
+}
+
+.card:hover{
+  transform: scale(0.95, 0.95);
+  box-shadow: 0px 0px 10px;
+}
+
+.card > .cardTitle{
+  margin: 0;
+  font-size: 40px;
+  text-align: center;
+  height: 50px;
+  background-color: #212121;
+  color: white;
+  user-select: none;
+}
+
+.card > .cardImg{
+  position: absolute;
+  top: 50px;
+  left: 0;
+  width: 100%;
+  height: auto;
+  user-select: none;
+}
+
+.card > .cardInfos{
+  position: absolute;
+  bottom: 0;
+  display: inline-block;
+  width: 100%;
+  background-color: #212121;
+  height: 50px;
+  color: white;
+  user-select: none;
+}

@@ -4,6 +4,64 @@
      -khtml-user-select: none; /* Konqueror HTML */
        -moz-user-select: none; /* Old versions of Firefox */
         -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none; /* Non-prefixed version, currently
-                                  supported by Chrome, Opera and Firefox */
+            user-select: none; /* Non-prefixed version, currently supported by Chrome, Opera and Firefox */
+          outline-width: 100px;
+}
+
+.noselect:focus{
+  outline-width: 100px;
+}
+
+@font-face {
+ font-family: "oMontserrat";
+ src: url("Montserrat/Montserrat-Regular.ttf") format("truetype");
+}
+
+#mainTitle{
+  background-color: #66B5FF;
+  padding: 1%;
+  height: 8%;
+  text-shadow: 0px 0px 30px black;
+}
+
+
+body, html{
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  font-family: "oMontserrat";
+}
+
+.horizontalLine{
+  border-bottom: solid white 1px;
+  width: 100%;
+}
+
+.verticalLine{
+  border-left: solid white 1px;
+  height: 100%;
+}
+
+.title{
+  font-size: 40px;
+}
+
+.secondaryTitle{
+  font-size: 30px;
+}
+
+.white{
+  color: white;
+}
+
+.black{
+  color: black;
+}
+
+.popup{
+  display: block;
+  position: absolute;
+  z-index: 1;
+  top: 100px;
 }
