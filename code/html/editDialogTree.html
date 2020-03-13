@@ -23,10 +23,17 @@
     <button type="button" name="button" class="btn noselect white" id="addSwitchBtn">Switch</button>
   </div>
   <div id="graph"></div>
+
   <div id="properties">
-    <div id="propertiesType">Player</div>
-    <div id="propertiesId">#01</div>
-    <textarea type="textarea" name="propertiesContent" value="Contenu" id="propertiesContent"></textarea>
+    <div id="propertiesGroup1">
+      <div id="propertiesType" class="white noselect">Sélectionnez un node</div>
+      <div id="propertiesId" class="white noselect">#</div>
+      <p class="white noselect">Contenu :</p>
+      <textarea name="propertiesContent" id="propertiesContent"></textarea>
+      <p class="white noselect">Résumé :</p>
+      <input type="text" id="propertiesResume" maxlength="14" class="">
+    </div>
+    <button type="button" name="button" id="propertiesValidate" class="btn noselect">Valider les changements</button>
   </div>
 
 

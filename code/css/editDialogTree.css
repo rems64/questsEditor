@@ -33,25 +33,41 @@ body{
   bottom: 0;
   width: 30%;
   height: 100%;
-  background: white;
-  border-left: solid black 1px;
+  background: #66B5FF;
+  border-left: solid white 2px;
 }
 
-#properties > #propertiesType {
+#properties > #propertiesGroup1 {
+  overflow: auto;
+}
+
+#properties > #propertiesGroup1 > #propertiesType {
   margin: 1%;
   text-align: left;
 }
 
-#properties > #propertiesId {
+#properties > #propertiesGroup1 > #propertiesId {
   margin: 1%;
   text-align: right;
 }
 
-#properties > #propertiesContent {
+#properties > #propertiesGroup1 > #propertiesContent {
   margin: 1%;
   width: 98%;
 }
 
+#properties > #propertiesGroup1 > #propertiesResume {
+  margin: 1%;
+  width: 98%;
+}
+
+#properties > #propertiesValidate {
+  text-align: center;
+  position: absolute;
+  bottom: 0;
+  margin: 2%;
+  width: 96%;
+}
 
 .draggable{
   background-color: red;

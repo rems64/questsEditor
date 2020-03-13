@@ -7,8 +7,11 @@ import { SVG } from "./svg.esm.js"
 import './svg.panzoom.mjs'
 import './svg.draggable.mjs'
 
+
+
 var nodeTypes = {
   "default": {
+    name: "Défaut",
     desc: "default",
     type: "horizontal",
     nature: "replique",
@@ -45,6 +48,7 @@ var nodeTypes = {
     text: "O"
   },
   "player": {
+    name: "Joueur",
     desc: "player",
     type: "horizontal",
     nature: "replique",
@@ -57,6 +61,7 @@ var nodeTypes = {
     text: "Joueur"
   },
   "npc": {
+    name: "PNJ",
     desc: "npc",
     type: "horizontal",
     nature: "replique",
@@ -69,6 +74,7 @@ var nodeTypes = {
     text: "PNJ"
   },
   "switchBool": {
+    name: "Switch",
     desc: "switchBool",
     type: "horizontal",
     nature: "switch",
@@ -86,8 +92,8 @@ var nodeTypes = {
 
 
 
-//var workingOnTreeID = remote.getGlobal('sharedObj').currentDialogTree
-var workingOnTreeID = "d0"
+var workingOnTreeID = remote.getGlobal('sharedObj').currentDialogTree
+//var workingOnTreeID = "d0"
 var treeJSON;
 console.log("working on : " + workingOnTreeID);
 
@@ -129,11 +135,17 @@ var currentLink;
 const BrowserWindow = remote.BrowserWindow;
 var inputNode;
 var outputNode;
+var nTDP;
 var movingNode = false;
 var zoomMax = 800;
 var zoomMin = 80000;
+var writingText = false;
 loadTree()
 
+
+function last(array){
+  return array[array.length-1]
+}
 
 function loadTree(){
   inputNode = createNode(canvas, "input");
@@ -156,6 +168,7 @@ function loadTree(){
           var tmpNode = createNode(canvas, String(treeJSON.nodes[index].desc), String(treeJSON.nodes[index].id));
           tmpNode.move(treeJSON.nodes[index].x, treeJSON.nodes[index].y);
           tmpNode.changeContent(treeJSON.nodes[index].content);
+          tmpNode.updateResume(treeJSON.nodes[index].resume);
         }
         else{
           if(treeJSON.nodes[index].nature=="input"){
@@ -313,6 +326,9 @@ function createPin(parent, id, x, y){
   else if(id=="bool"){
     pin = parent.circle(10).move(x, y).addClass("pin").addClass("booleanPin");
   }
+  else{
+    alert("Erreur lors de la création du node! Merci de reporter ceci comme un bug")
+  }
   pin.on("mousedown", function(event){
     selectPinEvt(event, this);
   });
@@ -444,18 +460,21 @@ function Pin(parent, id, x, y, obj){
   }
 }
 
-function Node(parent, nodeType, id, content){
+function Node(parent, nodeType, id, content, resume){
   if (id==false) {
     this.id = getNodeNewID();
-  }
+  } // set empty ID
   else{
-    this.id = id
-  }
+    this.id = id} // set ID
   if (!content) {
-    this.content="";
+    this.content="";} // set empty content
+  else {
+    this.content=content;} // set Content
+  if(!resume) {
+    this.resume="";
   }
   else {
-    this.content=content;
+    this.resume=resume;
   }
   this.type = nodeTypes[nodeType];
   this.nature = this.type.nature;
@@ -517,17 +536,21 @@ function Node(parent, nodeType, id, content){
       this.path.parent().remove()
       delete this
     }
-  }
+  };
   this.changeContent = function(content){
     if(this.id>0){
       this.content = content;
       if (String(content).length>13) {
-        this.contentTxt.text(String(content).substring(0,13)+"...");
+        //this.contentTxt.text(String(content).substring(0,13)+"...");
       }
       else {
-        this.contentTxt.text(String(content));
+        //this.contentTxt.text(String(content));
       }
     }
+  };
+  this.updateResume = function(content){
+    this.resume = content;
+    this.contentTxt.text(String(content))
   }
 }
 
@@ -625,16 +648,13 @@ $("#save").on("click", function(){
 })
 
 /*
-$("#compile").on("click", function(){
-  compileGraph();
-})
-*/
-
 $("#validatePromptContent").on("click", function(){
   concernedObj.changeContent($("#contentInput").val());
   hidePrompts();
 })
+*/
 
+/*
 $("#validateSwitchPromptContent").on("click", function(){
   var switchPrompt1 = document.getElementById("switchSelectVariable");
   var switchPrompt1Val = switchPrompt1.options[switchPrompt1.selectedIndex].value;
@@ -643,10 +663,11 @@ $("#validateSwitchPromptContent").on("click", function(){
   var switchPrompt3 = document.getElementById("switchValueInput");
   var switchPrompt3Val = switchPrompt3.value;
   var strToWrite = switchPrompt1Val + "|" + switchPrompt2Val + "|" + switchPrompt3Val
+  var resumeToWrite =
   concernedObj.changeContent(strToWrite);
   promptSwitchDom.style.visibility = "hidden"
 })
-
+*/
 function saveGraph(){
   /*
   fs.readFile(pathToDial, 'utf8', function(err, contents) {
@@ -716,7 +737,8 @@ function compileGraph(){
       x: cnode.x(),
       y: cnode.y(),
       content: cnode.content,
-      desc: cnode.desc
+      desc: cnode.desc,
+      resume: cnode.resume
     })
   }
   saveGraph();
@@ -743,6 +765,40 @@ $("#backToMenu").on("click", function(){
   });
 })
 
+$("#propertiesValidate").click(function(){
+  if(!nTDP){
+    return -1
+  }
+  nTDP.changeContent($("#propertiesContent").val());
+  nTDP.updateResume($("#propertiesResume").val());
+})
+
+$("#propertiesContent, #propertiesResume").on("focus", function(){
+  console.log("Focus got");
+  writingText=true;
+})
+
+$("#propertiesContent, #propertiesResume").focusout(function(){
+  console.log("Focus lost");
+  writingText=false;
+})
+
+function updatePropertiesPanel(){
+  nTDP=last(currentlySelected);
+  if (nTDP.nature=="input" | nTDP.nature=="output") {
+    $("#propertiesType").text(nTDP.nature);
+    $("#propertiesId").text("Pas d'ID sur l'entrée ou la sortie");
+    $("#propertiesContent").val("Pas de contenu pour l'entrée ou la sortie");
+    $("#propertiesResume").val("");
+    return -1
+  }
+  if (nTDP.nature=="replique") {
+    $("#propertiesType").text(nTDP.type.name);
+    $("#propertiesId").text("#"+nTDP.id);
+    $("#propertiesContent").val(nTDP.content);
+    $("#propertiesResume").val(nTDP.resume);
+  }
+}
 
 //######################################################################################################################################################################################
 //####################################################################################### EVENTS #######################################################################################
@@ -778,7 +834,7 @@ $("#graph").dblclick(function(event){
 
 function selectNodeEvt(event, ceci){
   concernedObj = null;
-  concernedObj=getConcernedNode(ceci)
+  concernedObj=getConcernedNode(ceci);
   if (!event.shiftKey) {
     if(currentlySelected.length>0){ //Si il y a déjà des nodes sélectionnés
       if(!currentlySelected.includes(concernedObj)){ //
@@ -810,10 +866,10 @@ function selectNodeEvt(event, ceci){
   //tmpdX = getCoords(event)[0] - concernedObj.x()
   //tmpdY = getCoords(event)[1] - concernedObj.y()
   var rect = svgDOM.getBoundingClientRect();
-  console.log((rect.width/panZoomInfos[0])*event.offsetX);
   tmpdX=((panZoomInfos[2])*(event.offsetX/rect.width)+panZoomInfos[0]) - concernedObj.x()
   tmpdY=((panZoomInfos[3])*(event.offsetY/rect.height)+panZoomInfos[1]) - concernedObj.y()
   moveType=1;
+  updatePropertiesPanel();
 };
 
 
@@ -853,7 +909,6 @@ $("#graph").mousemove(function(event){
     var rect = svgDOM.getBoundingClientRect();
     var newX = (panZoomInfos[2])*(event.offsetX/rect.width);
     var newY = (panZoomInfos[3])*(event.offsetY/rect.height);
-    console.log("Hello : " + (event.offsetX/rect.width));
     panAbs((newX-delta[0]), (newY-delta[1]));
     //console.log(getRelativeCoordsByClient(event)[0]);
     setPanZoom();
@@ -874,7 +929,6 @@ function getRelativeCoordsByClient(evt){
 }
 
 function panAbs(x, y){
-  console.log(x);
   panZoomInfos[0]=-x
   panZoomInfos[1]=-y
   setPanZoom()
@@ -909,11 +963,9 @@ $(document).on("mouseup", function(){
   movingNode = false;
   currentPin=null
   moveType=0;
-  console.log("mouseup");
 });
 
 $(document).on("mousewheel", function(event){
-  console.log(event);
   if (event.originalEvent.deltaY) {
     var rect = svgDOM.getBoundingClientRect();
     zoom(event.originalEvent.deltaY, (event.offsetX/rect.width), (event.offsetY/rect.height));
@@ -1018,6 +1070,21 @@ $(document).on("keydown", (e) => {
         }
       }
     }
+    if(e.key=="j"){
+      if (!writingText) {
+        createNode(canvas, "player").center((panZoomInfos[2]+panZoomInfos[0])/2, (panZoomInfos[3]+panZoomInfos[1])/2, true);
+      }
+    }
+    if(e.key=="p"){
+      if (!writingText) {
+        createNode(canvas, "npc").center((panZoomInfos[2]+panZoomInfos[0])/2, (panZoomInfos[3]+panZoomInfos[1])/2, true);
+      }
+    }
+    if(e.key=="s"){
+      if (!writingText) {
+        createNode(canvas, "switchBool").center((panZoomInfos[2]+panZoomInfos[0])/2, (panZoomInfos[3]+panZoomInfos[1])/2, true);
+      }
+    }
   });
 
 function dblClickNodeEvt(event, ceci){
@@ -1061,10 +1128,7 @@ function getLinkByPath(path){
 }
 
 function clickLinkEvent(event, ceci){
-  console.log("clicked link");
   currentLink=getLinkByPath(ceci);
-  console.log(ceci);
-  console.log(currentLink);
   if(selectedLink!=currentLink){
     if(selectedLink){selectedLink.path.removeClass("linkSelected");}
     selectedLink=currentLink;
