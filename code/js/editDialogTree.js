@@ -101,9 +101,14 @@ var canvas = SVG().addTo('#graph');
 
 var svgDOM = document.getElementsByTagName("svg")[0];
 var oldStrAttr;
-var panZoomInfos = [0, 0, 2880, 1200]
-window.addEventListener('resize', function() {
+var panZoomInfos = [0, 0, 1200*16/9-140, 1200]
+
+window.addEventListener('resize', function(event) {
   console.log("New ratio");
+  console.log(event.currentTarget.innerWidth);
+  console.log(event.currentTarget.innerHeight);
+  panZoomInfos[3]=panZoomInfos[2]*(event.currentTarget.innerHeight/event.currentTarget.innerWidth)-140
+  setPanZoom()
 });
 
 
