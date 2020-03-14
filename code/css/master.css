@@ -17,12 +17,6 @@
  src: url("Montserrat/Montserrat-Regular.ttf") format("truetype");
 }
 
-#mainTitle{
-  background-color: #66B5FF;
-  padding: 1%;
-  height: 8%;
-  text-shadow: 0px 0px 30px black;
-}
 
 
 body, html{
@@ -44,7 +38,7 @@ body, html{
 }
 
 .title{
-  font-size: 40px;
+  font-size: 30px;
 }
 
 .secondaryTitle{

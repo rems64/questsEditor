@@ -1,7 +1,7 @@
 // Simple-git without promise
-const simpleGit = require('simple-git')("../../data/ROGData");// Shelljs package for running shell tasks optional
+const simpleGit = require('simple-git')("./data/ROGData");// Shelljs package for running shell tasks optional
 const shellJs = require('shelljs');// Simple Git with Promise for handling success and failure
-const simpleGitPromise = require('simple-git/promise')("../../data/ROGData");
+const simpleGitPromise = require('simple-git/promise')("./data/ROGData");
 
 // Repo name
 const repo = 'ROGData';  //Repo name

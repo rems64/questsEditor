@@ -4,6 +4,20 @@ const url = require('url');
 const path = require('path');
 var fs = require("fs");
 
+// Simple-git without promise
+const simpleGit = require('simple-git')("./data/ROGData");// Shelljs package for running shell tasks optional
+const shellJs = require('shelljs');// Simple Git with Promise for handling success and failure
+const simpleGitPromise = require('simple-git/promise')("./data/ROGData");
+
+// Repo name
+const repo = 'ROGData';  //Repo name
+// User name and password of your GitHub
+var userName = 'astralpetalgames';
+var password = 'r1seofglory';
+var gitHubUrl;
+
+
+
 var dialogsList=[]
 var pendingDelete;
 var highestID=0;
@@ -175,3 +189,104 @@ $("#createNewDialog").on("click", function(){
 });
 
 loadDialogsList();
+
+
+
+
+
+
+
+
+
+function addLog(type, content){
+  var paragraph = document.createElement("p");
+  if (content!="") {
+    paragraph.innerHTML = content;
+  }
+  else {
+    paragraph.innerHTML = "Empty"
+  }
+  document.getElementById("gitLog").appendChild(paragraph);
+
+  if(type=="info"){
+    paragraph.classList.add("info")
+  }
+  else if(type=="warning"){
+    paragraph.classList.add("warning")
+  }
+  else if(type=="error"){
+    paragraph.classList.add("error")
+  }
+}
+
+$("#updateBtn").click(function(){
+  console.log("UpdatingGit");
+  $("#gitUpdate").css("visibility", "visible");
+
+  simpleGit.addConfig('user.email','astralpetalgames@gmail.com');
+  simpleGit.addConfig('user.name','Astral Petal Games');
+  // Add remore repo url as origin to repo
+  gitHubUrl = `https://${userName}:${password}@github.com/${userName}/${repo}`;
+  addLog("info", "Logged in")
+  //simpleGitPromise.addRemote('origin',gitHubUrl);
+
+
+  addLog("info", "Pulling...")
+  simpleGitPromise.pull("origin","master")
+      .then((success) => {
+        addLog("info", "Réussite du pull")
+        addLog("info", "Adding...")
+        simpleGitPromise.add('.')
+        .then(
+          (addSuccess) => {
+            addLog("info", "Bien ajouté au commit")
+            // Commit files as Initial Commit
+            addLog("info", "Début du commit")
+            simpleGitPromise.commit('My commit qui est super vraiment bien.')
+            .then(
+              (successCommit) => {
+                addLog("info", "Succès du commit")
+                addLog("info", successCommit.commit)
+                console.log(successCommit.commit);
+                // Finally push to online repository
+                addLog("info", "Début du push...")
+                simpleGitPromise.push('origin','master')
+                .then((success) => {
+                  addLog("info", "Dialogues bien envoyés")
+                  addLog("info", "Succès")
+                  setTimeout(function () {
+                    $("#gitUpdate").css("visibility", "hidden");
+                  }, 4000);
+                },(failed)=> {
+                  addLog("error", "Erreur lors de l'envoi")
+                  setTimeout(function () {
+                    $("#gitUpdate").css("visibility", "hidden");
+                  }, 2000);
+                });
+              }, (failed) => {
+                addLog("error", "Errur lors du commit")
+                setTimeout(function () {
+                  $("#gitUpdate").css("visibility", "hidden");
+                }, 2000);
+              });
+          }, (failedAdd) => {
+            addLog("error", "Erreur lors de l'ajout")
+            setTimeout(function () {
+              $("#gitUpdate").css("visibility", "hidden");
+            }, 2000);
+          });
+      },(failed)=> {
+        addLog("error", "Erreur lors du pull")
+        addLog("error", failed)
+        setTimeout(function () {
+          $("#gitUpdate").css("visibility", "hidden");
+        }, 2000);
+      });
+
+
+
+})
+
+function getFromGithub(){
+
+}

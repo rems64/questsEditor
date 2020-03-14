@@ -4,11 +4,22 @@ body{
   flex-direction: column;
 }
 
+#mainHeader{
+  background-color: #66B5FF;
+  height: 10%;
+  text-shadow: 0px 0px 30px black;
+  display: flex;
+  flex-direction: row;
+}
+
+#mainHeader > p {
+  font-size: 25px;
+}
+
+
 #questsArea{
-  padding: 1%;
   background-color: #FFBB4D;
-  height: 40%;
-  flex-grow: 1;
+  height: 90%;
 }
 
 #dialogsArea{
@@ -121,7 +132,6 @@ body{
 
 #createNewDialog{
   margin-left: auto;
-  width: 80px;
   padding: 10px;
   background-color: #35de06;
   border: solid 1px transparent;
@@ -137,9 +147,67 @@ body{
   background-color: #03400f;
 }
 
+#updateBtn{
+  align-self: flex-end;
+  margin-left: auto;
+  height: 90px;
+  padding: 50px;
+  font-size: 30px;
+  background-color: #35de06;
+  border: solid 1px transparent;
+  transition: background-color 0.1s;
+}
+
+#updateBtn:hover{
+  background-color: #057d11;
+}
+
+#updateBtn:active{
+  background-color: #03400f;
+}
 
 #newDialogTitle{
   border: 0;
   border-radius: 4px;
   padding: 10px;
+}
+
+#gitUpdate {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  position: absolute;
+  background-color: #66B5FF;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 40px black;
+  visibility: hidden;
+}
+
+#gitLog {
+  height: 80%;
+  max-height: 500px;
+  overflow: auto;
+  padding: 10px;
+}
+
+#gitLog > p {
+  padding: 10px;
+  background-color: #4f8dc7;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px rgba(0.2, 0.2, 0.2, 0.7);
+  overflow: auto;
+  color: white;
+}
+
+#gitLog > .info {
+  border: solid green 3px;
+}
+
+#gitLog > .error {
+  border: solid red 3px;
+}
+
+#gitLog > .warning {
+  border: solid orangered 3px;
 }
