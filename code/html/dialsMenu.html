@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <link rel="stylesheet" href="../css/master.css">
+    <link rel="stylesheet" href="../css/dialsMenu.css">
+  </head>
+  <body>
+    <div class="" id="mainHeader">
+      <p class="noselect">Menu principal</p>
+      <button type="button" name="button" class="white noselect btn" id="updateBtn">Synchroniser</button>
+    </div>
+    <!--
+    <div id="questsArea">
+      <div class="secondaryTitle">Mes quêtes:</div>
+      <div id="questsList">
+        <div class="quest">Le commencement...</div>
+        <div class="quest">Jack</div>
+        <div class="quest">L'affront</div>
+      </div>
+    </div>
+    -->
+    <div id="dialogsArea">
+      <div class="secondaryTitle noselect">Mes dialogues</div>
+      <input type="text" name="" value="defaultTitle" id="newDialogTitle"></input>
+      <button type="button" name="button" class="white noselect btn" id="createNewDialog">Nouveau</button>
+      <div id="dialogsList">
+      </div>
+    </div>
+    <div id="promptDelete">
+      <p class="title white noselect">Voulez-vous vraiment supprimer?</p>
+      <div>
+        <button type="button" name="button" id="yesDelete" class="white noselect">Oui</button>
+        <button type="button" name="button" id="noDelete" class="white noselect">Non</button>
+      </div>
+    </div>
+    <div id="gitUpdate">
+      <h1 class="white">SYNCHRONISATION DES DIALOGUES...</h1>
+      <div id="gitLog">
+      </div>
+    </div>
+    <script type="text/javascript" src="../js/dialsMenu.js"></script>
+  </body>
+</html>
