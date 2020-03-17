@@ -66,8 +66,8 @@ function createMainWindow(){
   mainWindow = new BrowserWindow({width:1280, height:720, icon:__dirname+'/Images/Icons/icon.png', titleBarStyle: 'hidden' , fullscreen:false, show: false, webPreferences:{nodeIntegration: true}})
   mainWindow.setIgnoreMouseEvents(false);
   mainWindow.loadURL(url.format({
-    //pathname: path.join(__dirname, 'code/html/mainMenu.html'),
-    pathname: path.join(__dirname, 'code/html/storyTree.html'),
+    pathname: path.join(__dirname, 'code/html/mainMenu.html'),
+    //pathname: path.join(__dirname, 'code/html/storyTree.html'),
     protocol: 'file:',
     slashes: true
   }));

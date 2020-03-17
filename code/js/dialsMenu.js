@@ -3,11 +3,15 @@ const { remote } = require('electron')
 const url = require('url');
 const path = require('path');
 var fs = require("fs");
+const os = require("os");
+const hostname = os.hostname();
 
 // Simple-git without promise
-const simpleGit = require('simple-git')("./data/ROGData");// Shelljs package for running shell tasks optional
-const shellJs = require('shelljs');// Simple Git with Promise for handling success and failure
-const simpleGitPromise = require('simple-git/promise')("./data/ROGData");
+//const simpleGit = require('simple-git')("./data/ROGData");// Shelljs package for running shell tasks optional
+console.log(__dirname)
+const simpleGit = require('simple-git')(path.join(__dirname,"../../data/ROGData"));
+const shellJs = require('shelljs');
+const simpleGitPromise = require('simple-git/promise')(path.join(__dirname,"../../data/ROGData"));
 
 // Repo name
 const repo = 'ROGData';  //Repo name
@@ -219,6 +223,49 @@ function addLog(type, content){
   }
 }
 
+function updateGitAsync(){
+  addLog("info", "Pulling...")
+  simpleGitPromise.pull("origin",hostname)
+  .then((success) => {
+    addLog("info", "Réussite du pull")
+    addLog("info", "Adding...")
+    simpleGitPromise.add('.')
+    .then(
+      (addSuccess) => {
+        addLog("info", "Bien ajouté au commit")
+        // Commit files as Initial Commit
+        addLog("info", "Début du commit")
+        simpleGitPromise.commit('My commit qui est super vraiment bien.')
+        .then(
+          (successCommit) => {
+            addLog("info", "Succès du commit")
+            addLog("info", successCommit.commit)
+            console.log(successCommit.commit);
+            // Finally push to online repository
+            addLog("info", "Début du push...")
+            simpleGitPromise.push('origin',hostname)
+            .then((success) => {
+              addLog("info", "Dialogues bien envoyés")
+              addLog("info", "Succès")
+              setTimeout(function () {
+                $("#gitUpdate").css("visibility", "hidden");
+              }, 4000);
+            },(failed)=> {
+              addLog("error", "Erreur lors de l'envoi")
+            });
+          }, (failed) => {
+            addLog("error", "Errur lors du commit")
+          });
+        }, (failedAdd) => {
+          addLog("error", "Erreur lors de l'ajout")
+        });
+      },(failed)=> {
+        addLog("error", "Erreur lors du pull")
+        addLog("error", failed)
+      });
+    }
+
+
 $("#updateBtn").click(function(){
   console.log("UpdatingGit");
   $("#gitUpdate").css("visibility", "visible");
@@ -229,52 +276,28 @@ $("#updateBtn").click(function(){
   gitHubUrl = `https://${userName}:${password}@github.com/${userName}/${repo}`;
   addLog("info", "Logged in")
   //simpleGitPromise.addRemote('origin',gitHubUrl);
-  shellJs.cd("./data/ROGData");
-  alert(shellJs.pwd())
-
-
-  addLog("info", "Pulling...")
-  simpleGitPromise.pull("origin","master")
+  //shellJs.cd("./data/ROGData");
+  //alert(shellJs.pwd())
+  simpleGitPromise.checkoutBranch(hostname, "master").then((success)=>{
+    console.log("Branche créée");
+    simpleGitPromise.checkout(hostname).then((success)=>{
+      simpleGitPromise.push('origin',String(hostname))
       .then((success) => {
-        addLog("info", "Réussite du pull")
-        addLog("info", "Adding...")
-        simpleGitPromise.add('.')
-        .then(
-          (addSuccess) => {
-            addLog("info", "Bien ajouté au commit")
-            // Commit files as Initial Commit
-            addLog("info", "Début du commit")
-            simpleGitPromise.commit('My commit qui est super vraiment bien.')
-            .then(
-              (successCommit) => {
-                addLog("info", "Succès du commit")
-                addLog("info", successCommit.commit)
-                console.log(successCommit.commit);
-                // Finally push to online repository
-                addLog("info", "Début du push...")
-                simpleGitPromise.push('origin','master')
-                .then((success) => {
-                  addLog("info", "Dialogues bien envoyés")
-                  addLog("info", "Succès")
-                  setTimeout(function () {
-                    $("#gitUpdate").css("visibility", "hidden");
-                  }, 4000);
-                },(failed)=> {
-                  addLog("error", "Erreur lors de l'envoi")
-                });
-              }, (failed) => {
-                addLog("error", "Errur lors du commit")
-              });
-          }, (failedAdd) => {
-            addLog("error", "Erreur lors de l'ajout")
-          });
+        addLog("info", "Nouvelle branche synchronisée")
+        updateGitAsync();
       },(failed)=> {
-        addLog("error", "Erreur lors du pull")
-        addLog("error", failed)
+        addLog("error", "Erreur lors de la synchronisation initiale")
       });
-
-
-
+    }, (failed => {
+      alert("Erreur incomprehensible 1")
+      alert(failed);
+    }));
+  }, (failed => {
+    console.log("Exist déjà, basculement");
+    simpleGit.checkout(hostname)
+    console.log("Tout va bien");
+    updateGitAsync();
+  }));
 })
 
 function getFromGithub(){
