@@ -86,6 +86,7 @@ $("#noDelete").on("click", function(){
 });
 
 function loadDialogsList(){
+  $("#dialogsList").children().remove()
   var pathToDials = path.join(__dirname, "../../data/ROGData/dialogs/");
   fs.readdir(pathToDials, function (err, files) {
       //handling error
@@ -242,7 +243,9 @@ function addAndPush(){
           simpleGitPromise.push('origin',hostname)
           .then((success) => {
             addLog("info", "Dialogues bien envoyés")
+            addLog("info", "Updating menu...")
             addLog("info", "Succès")
+            loadDialogsList();
             setTimeout(function () {
               $("#gitUpdate").css("visibility", "hidden");
             }, 4000);
@@ -257,16 +260,16 @@ function addAndPush(){
       });
 }
 
-function updateGitAsync(){
+function tryPull(){
   addLog("info", "Pulling...")
   simpleGitPromise.pull("origin",hostname)
   .then((success) => {
     addLog("info", "Réussite du pull")
     addAndPush();
       },(failed)=> {
-        addLog("error", "Erreur lors du pull");
+        addLog("warning", "Erreur lors du pull");
         addLog("error", failed);
-        addLog("info", "Il semblerait que vous ayaient modifié votre version sans mettre à jour la source distante");
+        addLog("warning", "Il semblerait que vous ayaient modifié votre version sans mettre à jour la source distante");
         addLog("info", "Tentative de push pour forcer la synchronisation");
         addAndPush();
       });
@@ -291,7 +294,7 @@ $("#updateBtn").click(function(){
       simpleGitPromise.push('origin',String(hostname))
       .then((success) => {
         addLog("info", "Nouvelle branche synchronisée")
-        updateGitAsync();
+        tryPull();
       },(failed)=> {
         addLog("error", "Erreur lors de la synchronisation initiale")
       });
@@ -303,7 +306,7 @@ $("#updateBtn").click(function(){
     console.log("Exist déjà, basculement");
     simpleGit.checkout(hostname)
     console.log("Tout va bien");
-    updateGitAsync();
+    tryPull();
   }));
 })
 

@@ -102,12 +102,15 @@ var canvas = SVG().addTo('#graph');
 var svgDOM = document.getElementsByTagName("svg")[0];
 var oldStrAttr;
 var panZoomInfos = [0, 0, 1200*16/9-140, 1200]
+panZoomInfos[3]=panZoomInfos[2]*($(window).height()/$(window).width())-($("#toolBar").outerHeight())
+setPanZoom()
 
 window.addEventListener('resize', function(event) {
   console.log("New ratio");
   console.log(event.currentTarget.innerWidth);
   console.log(event.currentTarget.innerHeight);
-  panZoomInfos[3]=panZoomInfos[2]*(event.currentTarget.innerHeight/event.currentTarget.innerWidth)-140
+  //panZoomInfos[2]=event.currentTarget.innerWidth-($("#properties").outerWidth())
+  panZoomInfos[3]=panZoomInfos[2]*(event.currentTarget.innerHeight/event.currentTarget.innerWidth)-($("#toolBar").outerHeight())
   setPanZoom()
 });
 
@@ -754,7 +757,7 @@ $("#backToMenu").on("click", function(){
   var mainWindow = new BrowserWindow({width:1280, height:720, icon:__dirname+'/Images/Icons/icon.png', titleBarStyle: 'hidden' , fullscreen:false, show: false, webPreferences:{nodeIntegration: true}})
   mainWindow.setIgnoreMouseEvents(false);
   mainWindow.loadURL(url.format({
-    pathname: path.join(__dirname, 'mainMenu.html'),
+    pathname: path.join(__dirname, 'dialsMenu.html'),
     //pathname: path.join(__dirname, 'code/html/editDialogTree.html'),
     protocol: 'file:',
     slashes: true
@@ -820,7 +823,8 @@ $("#graph").mousedown(function(event){
     hidePrompts()
   }
   if(moveType==0){
-    var rect = svgDOM.getBoundingClientRect();
+    //var rect = svgDOM.getBoundingClientRect();
+    var rect = document.getElementsByTagName("svg")[0].getBoundingClientRect();
     //console.log((rect.width/panZoomInfos[0])*event.offsetX);
     moveType=3;
     delta[0]=(panZoomInfos[2])*(event.offsetX/rect.width)+panZoomInfos[0]
@@ -870,7 +874,7 @@ function selectNodeEvt(event, ceci){
   //currentControled = ceci.parent(SVG.G);
   //tmpdX = getCoords(event)[0] - concernedObj.x()
   //tmpdY = getCoords(event)[1] - concernedObj.y()
-  var rect = svgDOM.getBoundingClientRect();
+  var rect = document.getElementsByTagName("svg")[0].getBoundingClientRect();
   tmpdX=((panZoomInfos[2])*(event.offsetX/rect.width)+panZoomInfos[0]) - concernedObj.x()
   tmpdY=((panZoomInfos[3])*(event.offsetY/rect.height)+panZoomInfos[1]) - concernedObj.y()
   moveType=1;
@@ -911,7 +915,8 @@ $("#graph").mousemove(function(event){
   else if(moveType==3){
     //pan(-event.originalEvent.movementX*movementSpeed*((panZoomInfos[2]-panZoomInfos[0])*0.002), -event.originalEvent.movementY*movementSpeed*((panZoomInfos[3]-panZoomInfos[1])*0.0002))
     //panAbs(-event.clientX, -event.clientY)
-    var rect = svgDOM.getBoundingClientRect();
+    var rect = document.getElementsByTagName("svg")[0].getBoundingClientRect();
+    console.log(event);
     var newX = (panZoomInfos[2])*(event.offsetX/rect.width);
     var newY = (panZoomInfos[3])*(event.offsetY/rect.height);
     panAbs((newX-delta[0]), (newY-delta[1]));
