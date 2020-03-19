@@ -223,45 +223,52 @@ function addLog(type, content){
   }
 }
 
+function addAndPush(){
+  addLog("info", "Adding...")
+  simpleGitPromise.add('.')
+  .then(
+    (addSuccess) => {
+      addLog("info", "Bien ajouté au commit")
+      // Commit files as Initial Commit
+      addLog("info", "Début du commit")
+      simpleGitPromise.commit('My commit qui est super vraiment bien.')
+      .then(
+        (successCommit) => {
+          addLog("info", "Succès du commit")
+          addLog("info", successCommit.commit)
+          console.log(successCommit.commit);
+          // Finally push to online repository
+          addLog("info", "Début du push...")
+          simpleGitPromise.push('origin',hostname)
+          .then((success) => {
+            addLog("info", "Dialogues bien envoyés")
+            addLog("info", "Succès")
+            setTimeout(function () {
+              $("#gitUpdate").css("visibility", "hidden");
+            }, 4000);
+          },(failed)=> {
+            addLog("error", "Erreur lors de l'envoi")
+          });
+        }, (failed) => {
+          addLog("error", "Errur lors du commit")
+        });
+      }, (failedAdd) => {
+        addLog("error", "Erreur lors de l'ajout")
+      });
+}
+
 function updateGitAsync(){
   addLog("info", "Pulling...")
   simpleGitPromise.pull("origin",hostname)
   .then((success) => {
     addLog("info", "Réussite du pull")
-    addLog("info", "Adding...")
-    simpleGitPromise.add('.')
-    .then(
-      (addSuccess) => {
-        addLog("info", "Bien ajouté au commit")
-        // Commit files as Initial Commit
-        addLog("info", "Début du commit")
-        simpleGitPromise.commit('My commit qui est super vraiment bien.')
-        .then(
-          (successCommit) => {
-            addLog("info", "Succès du commit")
-            addLog("info", successCommit.commit)
-            console.log(successCommit.commit);
-            // Finally push to online repository
-            addLog("info", "Début du push...")
-            simpleGitPromise.push('origin',hostname)
-            .then((success) => {
-              addLog("info", "Dialogues bien envoyés")
-              addLog("info", "Succès")
-              setTimeout(function () {
-                $("#gitUpdate").css("visibility", "hidden");
-              }, 4000);
-            },(failed)=> {
-              addLog("error", "Erreur lors de l'envoi")
-            });
-          }, (failed) => {
-            addLog("error", "Errur lors du commit")
-          });
-        }, (failedAdd) => {
-          addLog("error", "Erreur lors de l'ajout")
-        });
+    addAndPush();
       },(failed)=> {
-        addLog("error", "Erreur lors du pull")
-        addLog("error", failed)
+        addLog("error", "Erreur lors du pull");
+        addLog("error", failed);
+        addLog("info", "Il semblerait que vous ayaient modifié votre version sans mettre à jour la source distante");
+        addLog("info", "Tentative de push pour forcer la synchronisation");
+        addAndPush();
       });
     }
 
