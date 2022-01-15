@@ -26,7 +26,7 @@
     "fs": "0.0.1-security",
     "fs-extra": "^8.1.0",
     "jquery": "^3.5.0",
-    "shelljs": "^0.8.3",
+    "shelljs": "^0.8.5",
     "simple-git": "^1.131.0",
     "svg.js": "^2.7.1",
     "svgdom": "0.0.21"
